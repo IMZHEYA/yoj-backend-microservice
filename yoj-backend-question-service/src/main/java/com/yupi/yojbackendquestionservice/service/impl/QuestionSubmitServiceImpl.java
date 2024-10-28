@@ -18,10 +18,10 @@ import com.yupi.yojbackendmodel.model.enums.QuestionSubmitStatusEnum;
 import com.yupi.yojbackendmodel.model.vo.QuestionSubmitVO;
 import com.yupi.yojbackendmodel.model.vo.QuestionVO;
 import com.yupi.yojbackendquestionservice.mapper.QuestionSubmitMapper;
-import com.yupi.yojbackendserviceclient.service.JudgeService;
-import com.yupi.yojbackendserviceclient.service.QuestionService;
-import com.yupi.yojbackendserviceclient.service.QuestionSubmitService;
-import com.yupi.yojbackendserviceclient.service.UserService;
+import com.yupi.yojbackendquestionservice.service.QuestionSubmitService;
+import com.yupi.yojbackendserviceclient.service.JudgeFeignClient;
+import com.yupi.yojbackendserviceclient.service.QuestionFeignClient;
+import com.yupi.yojbackendserviceclient.service.UserFeignClient;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +41,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
 
     @Resource
-    private QuestionService questionService;
+    private QuestionFeignClient questionFeignClient;
 
 
     @Resource
@@ -49,11 +49,11 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
 
     @Resource
-    private UserService userService;
+    private UserFeignClient userFeignClient;
 
 
     @Resource
-    private JudgeService judgeService;
+    private JudgeFeignClient judgeFeignClient;
 
     @Override
     public Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
@@ -66,7 +66,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
         // 判断实体是否存在，根据类别获取实体
         Long questionId = questionSubmitAddRequest.getQuestionId();
-        Question question = questionService.getById(questionId);
+        Question question = questionFeignClient.getQuestionById(questionId);
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
@@ -84,7 +84,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
         //todo 执行判题服务
         CompletableFuture.runAsync(() -> {
-            judgeService.doJudge(questionSubmit.getId());
+            judgeFeignClient.doJudge(questionSubmit.getId());
         });
         return questionSubmit.getId();
     }
@@ -129,11 +129,11 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Override
     public QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit, User loginUser) {
         QuestionSubmitVO questionSubmitVO = QuestionSubmitVO.objToVo(questionSubmit);
-        QuestionVO questionVO = QuestionVO.objToVo(questionService.getById(questionSubmit.getQuestionId()));
+        QuestionVO questionVO = QuestionVO.objToVo(questionFeignClient.getQuestionById(questionSubmit.getQuestionId()));
         questionSubmitVO.setQuestionVO(questionVO);
         long userId = loginUser.getId();
         //不是提交者且不是管理员，不允许看别人的代码
-        if (userId != questionSubmit.getUserId() && !userService.isAdmin(loginUser)) {
+        if (userId != questionSubmit.getUserId() && !userFeignClient.isAdmin(loginUser)) {
             questionSubmitVO.setCode(null);
         }
         return questionSubmitVO;

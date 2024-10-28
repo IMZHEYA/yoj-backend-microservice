@@ -38,7 +38,7 @@ import static com.yupi.yojbackenduserservice.service.impl.UserServiceImpl.SALT;
  *
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/")
 @Slf4j
 @CrossOrigin(originPatterns = {"http://localhost:8080"}, allowCredentials = "true", allowedHeaders = {"*"})
 public class UserController {
