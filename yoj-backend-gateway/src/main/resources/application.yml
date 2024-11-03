@@ -3,3 +3,23 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: yoj-backend-user-service
+          uri: lb://yoj-backend-user-service
+          predicates:
+            - Path=/api/user/**
+        - id: yoj-backend-question-service
+          uri: lb://yoj-backend-question-service
+          predicates:
+            - Path=/api/question/**
+        - id: yoj-backend-judge-service
+          uri: lb://yoj-backend-judge-service
+          predicates:
+            - Path=/api/judge/**
+  application:
+    name: yoj-backend-gateway
+  main:
+    web-application-type: reactive
+server:
+  port: 8101
