@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/inner")
+@RequestMapping("/question/inner")
 public class QustionInnerController implements QuestionFeignClient {
 
     @Resource

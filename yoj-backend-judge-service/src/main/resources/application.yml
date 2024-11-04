@@ -50,6 +50,7 @@ spring:
     session:
       cookie:
         max-age: 2592000
+        path: /api
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
@@ -62,3 +63,5 @@ mybatis-plus:
 #代码沙箱配置
 codeSandbox:
   type: remote
+knife4j:
+  enable: true

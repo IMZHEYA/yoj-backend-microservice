@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user/inner")
+@RequestMapping("/inner")
 public class UserInnerController implements UserFeignClient {
 
     @Resource

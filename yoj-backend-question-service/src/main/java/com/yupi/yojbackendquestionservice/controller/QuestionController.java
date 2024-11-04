@@ -31,7 +31,7 @@ import java.util.List;
  * 
  */
 @RestController
-@RequestMapping("/")
+@RequestMapping("/question")
 @Slf4j
 public class QuestionController {
 
